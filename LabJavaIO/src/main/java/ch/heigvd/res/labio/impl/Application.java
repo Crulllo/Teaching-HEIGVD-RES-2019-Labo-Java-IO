@@ -124,12 +124,12 @@ public class Application implements IApplication {
   void storeQuote(Quote quote, String filename) throws IOException {
     String path = WORKSPACE_DIRECTORY;
     for (String tag : quote.getTags()) {
-      filename += "/" + tag;
+      path += "/" + tag;
     }
+    
+    new File(path).mkdirs();
     path += "/" + filename;
-
-    File file = new File(path);
-    file.getParentFile().mkdirs();
+    new File(path).createNewFile();
 
     Writer writer = new OutputStreamWriter(new FileOutputStream(path), "UTF-8");
     writer.write(quote.getQuote());
