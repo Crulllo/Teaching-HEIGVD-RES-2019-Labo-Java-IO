@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 public class FileNumberingFilterWriter extends FilterWriter {
 
   private static final Logger LOG = Logger.getLogger(FileNumberingFilterWriter.class.getName());
+  private int lineNumber = 1;
+  private boolean newLineFound;
 
   public FileNumberingFilterWriter(Writer out) {
     super(out);
@@ -25,17 +27,39 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   @Override
   public void write(String str, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    for (int i = off; i < off + len; i++) {
+      write(str.charAt(i));
+    }
   }
 
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    for (int i = off; i < off + len; i++) {
+      write(cbuf[i]);
+    }
   }
 
   @Override
   public void write(int c) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    if (lineNumber == 1) {
+      out.write(lineNumber++ + "\t");
+      out.write(c);
+    } else if (!newLineFound) {
+      out.write(c);
+    } else if (c != '\n') {
+      out.write(lineNumber++ + "\t" + (char)c);
+      newLineFound = false;
+    }
+
+    if (c == '\r') {
+      newLineFound = true;
+    } else if (c == '\n') {
+      if (newLineFound) {
+        out.write("\n");
+        newLineFound = false;
+      }
+      out.write(lineNumber++ + "\t");
+    }
   }
 
 }
